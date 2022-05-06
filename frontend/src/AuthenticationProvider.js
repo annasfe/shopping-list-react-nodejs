@@ -38,11 +38,7 @@ useEffect(() => {
     getLoggedUser();
 }, [setLoading]);
 
-useEffect(() => {
-  console.log("Now I get the authData!", authData);
-}, [authData]);
-
-  const onLogin = (value) => {setAuthData(value); console.log("auth data ", authData)}
+  const onLogin = (value) => setAuthData(value);
 
   const onLogout = () => setAuthData({});
 
