@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 
 const LoadContext = React.createContext("");
 
@@ -6,12 +6,8 @@ const LoadContextProvider = ({ children }) => {
 
   const [isLoading, setLoading] = useState(true);
 
-  useEffect(() => {
-    setLoading(true);
-}, []);
-
   return (
-    <LoadContext.Provider value={isLoading}>
+    <LoadContext.Provider value={{isLoading, setLoading}}>
       {children}
     </LoadContext.Provider>
   );

@@ -1,8 +1,10 @@
-import Button from "../components/Button"
 import React, { useState, useEffect } from "react"
 import { useNavigate } from 'react-router-dom';
+
+import MyButton from "../components/MyButton"
 import calculateClass from "../components/helper"
 import { useAuthentication } from "../AuthenticationProvider";
+import Button from '@mui/material/Button';
 
 
 function ShoppingList() {
@@ -66,14 +68,26 @@ function submitHandler(){
 }
 
 function logout(){
-  onLogout();
-  navigate("/")
+
+  const requestOptions = {
+    method: 'GET',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' }
+  };
+  fetch("/users/logout", requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        onLogout();
+        navigate("/login")
+      })
+      .catch(error => console.log(error)); 
 }
 
     return (
-
-      <div className="list">
-        {listItems.length===0 ? <h1>No items yet</h1> : <h1 style={{textAlign: 'center'}}>{authData.name && `${authData.name}`} shopping list</h1> }
+      !authData.name ? (<><h1>Welcome!</h1><h2>Log in above to continue</h2></>) : 
+      (<div className="list">
+        {listItems.length===0 ? <h1>No items yet</h1> : <h1 style={{textAlign: 'center'}}>{authData.name && `${authData.name}'s`} shopping list</h1> }
 
         <label>
           Need to buy:
@@ -91,16 +105,16 @@ function logout(){
               
               <span className={calculateClass(item.task)}>{item.task}</span>
               
-              <Button color="red" text="remove" handler={()=>deleteItem(item._id)}/> 
+              <MyButton color="red" text="remove" handler={()=>deleteItem(item._id)}/> 
             </li>
           )
          
             )}
         </ul>
 
-        <button onClick={logout}>Get me out of here!</button>
+        <Button variant="contained" onClick={logout}>Get me out of here!</Button>
 
-      </div>
+      </div>)
     );
 }
 

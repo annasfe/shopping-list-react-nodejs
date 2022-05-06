@@ -6,11 +6,9 @@ async function createTask(req, res) {
     try{
         const newTask = await Task.create({task: req.body.task});
         const activeUser = await User.findOne({_id: req.user._id});
-        console.log("found user ", activeUser.name)
-        console.log("adding task ", newTask._id)
 
         activeUser.tasks.push(newTask._id);
-        console.log("added task ", activeUser.tasks)
+
         activeUser.save();
         res.status(200).json({
             success: true,
@@ -36,6 +34,8 @@ function removeTask(req, res) {
             message: `Task with id ${completeTask} was deleted`
         });
     });
+
+    //TODO : WE SHOULD ALSO DELETE THE REF FROM USER TASKS ARRAY, ALTHOUGH MONGODB WILL NOT POPULATE IDs THAT DO NOT EXIST ANYWAY, SO IT ISN'T A PROBLEM
     
 };
 
@@ -45,9 +45,13 @@ function deleteAll(req, res) {
 
 function getTasks(req, res) {
 
-    User.findOne({_id: req.user.id}).populate("tasks").exec(function (err, data) {
-        if (err) return handleError(err);
-        console.log('The task is %s', data);
+    User.findOne({_id: req.user.id}).populate("tasks").exec(function (error, data) {
+        if (error) {
+            res.status(400).json({
+                success: false,
+                message: error
+            });
+        }
         res.status(200).json(data.tasks);
     });;
 

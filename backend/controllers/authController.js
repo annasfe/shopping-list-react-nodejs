@@ -10,7 +10,7 @@ function logout(req, res, next) {
     if (err) {
       return next(err);
     }
-    res.status(200).send("logged out!");
+    res.status(200).json({message:"logged out!"});
   });  
 }
 

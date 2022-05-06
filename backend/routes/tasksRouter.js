@@ -2,9 +2,16 @@ const tasksController = require('../controllers/tasksController')
 const router = require("express").Router();
 
 
-router.post('/',tasksController.createTask);
-router.post('/remove', tasksController.removeTask);
-router.post('/deleteall', tasksController.deleteAll);
-router.get('/', tasksController.getTasks);
+router.post('/',checkAuthenticated,tasksController.createTask);
+router.post('/remove', checkAuthenticated, tasksController.removeTask);
+//router.post('/deleteall', checkAuthenticated, tasksController.deleteAll);
+router.get('/', checkAuthenticated, tasksController.getTasks);
+
+function checkAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {    //a passport function
+      return next()
+    }
+    res.status(401).send(); // unauthorized error
+  }
 
 module.exports = router;

@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { useNavigate } from 'react-router-dom';
+import Button from '@mui/material/Button';
 
 
 const Register = () => {
@@ -41,7 +42,7 @@ const Register = () => {
           Password:
           <input type="password" value={password} onChange={(e)=>setPassword(e.target.value)}/>
     </label>
-        <button onClick={submitHandler}>Add me!</button>
+        <Button variant="contained" onClick={submitHandler}>Add me!</Button>
     </form>
     )
 }
