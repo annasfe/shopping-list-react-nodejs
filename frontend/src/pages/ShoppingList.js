@@ -5,12 +5,14 @@ import MyButton from "../components/MyButton"
 import calculateClass from "../components/helper"
 import { useAuthentication } from "../AuthenticationProvider";
 import Button from '@mui/material/Button';
+import axios from "axios";
 
 
 function ShoppingList() {
 
 const [listItems, setItem] = useState([]);
-const [value, setValue] = useState("");
+const [task, setTask] = useState("");
+const [image, setImage] = useState("");
 const { authData, onLogout } = useAuthentication();
 const navigate = useNavigate();
 
@@ -42,28 +44,42 @@ function deleteItem(itemID) {
       }); 
 }
 
-function submitHandler(){
+function submitHandler(e){
   
-  let exists = listItems.some((item) => item.task===value);
+  e.preventDefault();  
+  let exists = listItems.some((item) => item.task===task);
 
   if(!exists) {
-      //let newItem = {task: value, quantity: 0, id: 1234}
-      //setItem([...listItems, newItem]);
+      const formData = new FormData(e.target);
+      formData.get("task");
+      formData.append("image", image);
+
       const requestOptions = {
         method: 'POST',
+        url: "/tasks",
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ task: value })
+        headers: { 
+        //'Content-Type': 'application/json',
+        'Content-Type': 'multipart/form-data'
+        },
+        data: formData
+      // body: JSON.stringify({ task: value })		//use this with fetch
       };
-      fetch("/tasks", requestOptions)
-          .then(response => response.json())
-          .then(data => {
-            console.log(data);
-            getTasks();
-            setValue("");
-          }); 
+      axios(requestOptions)
+      .then(response => {
+        console.log("OK!", response);
+        getTasks();
+        setTask("");
+      })
+      // fetch("/tasks", requestOptions)
+      //     .then(response => response.json())
+      //     .then(data => {
+      //       console.log(data);
+      //       getTasks();
+      //       setTask("");
+      //     }); 
   } else {
-    setValue("");
+    setTask("");
   } 
 }
 
@@ -89,11 +105,24 @@ function logout(){
       (<div className="list">
         {listItems.length===0 ? <h1>No items yet</h1> : <h1 style={{textAlign: 'center'}}>{authData.name && `${authData.name}'s`} shopping list</h1> }
 
+        <form onSubmit={submitHandler}>
         <label>
           Need to buy:
-          <input type="text" value={value} onChange={(e)=>setValue(e.target.value)}/>
+          <input 
+            type="text" 
+            name="task"
+            value={task} 
+            onChange={(e)=>setTask(e.target.value)}
+          />
         </label>
-        <button onClick={submitHandler}>Add!</button>
+          <input 
+            type="file" 
+            name="image" 
+            value={image} 
+            onChange={(e)=>setImage(e.target.value)}
+          /> 
+        <button type="submit">Add!</button>
+        </form>
 
           <br/>
           <br/>

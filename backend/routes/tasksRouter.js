@@ -1,8 +1,12 @@
 const tasksController = require('../controllers/tasksController')
 const router = require("express").Router();
+const multer = require("multer");
 
 
-router.post('/',checkAuthenticated,tasksController.createTask);
+const upload = multer({ dest: 'uploads/' })
+
+
+router.post('/', upload.single("image"), checkAuthenticated, tasksController.createTask);
 router.post('/remove', checkAuthenticated, tasksController.removeTask);
 //router.post('/deleteall', checkAuthenticated, tasksController.deleteAll);
 router.get('/', checkAuthenticated, tasksController.getTasks);
